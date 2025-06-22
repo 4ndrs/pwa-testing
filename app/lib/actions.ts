@@ -2,15 +2,17 @@
 
 import webpush from "web-push";
 
+import type { PushSubscription as WebPushSubscription } from "web-push";
+
 webpush.setVapidDetails(
   "mailto:testing@example.com",
   process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
   process.env.VAPID_PRIVATE_KEY!,
 );
 
-let subscription: PushSubscription | null = null;
+let subscription: WebPushSubscription | null = null;
 
-export const subscribeUser = async (sub: PushSubscription) => {
+export const subscribeUser = async (sub: WebPushSubscription) => {
   subscription = sub;
   // In a production environment, you would want to store the subscription in a database
   // For example: await db.subscriptions.create({ data: sub })
@@ -18,9 +20,7 @@ export const subscribeUser = async (sub: PushSubscription) => {
   return { success: true };
 };
 
-export const unsubscribeUser = async (
-  subscription: PushSubscription | null,
-) => {
+export const unsubscribeUser = async () => {
   if (subscription) {
     // In a production environment, you would want to remove the subscription from the database
     // For example: await db.subscriptions.delete({ where: { endpoint: subscription.endpoint } })

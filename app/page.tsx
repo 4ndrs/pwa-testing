@@ -8,6 +8,8 @@ import {
 
 import { useEffect, useState } from "react";
 
+import type { PushSubscription as WebPushSubscription } from "web-push";
+
 const urlBase64ToUint8Array = (base64String: string) => {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
 
@@ -56,7 +58,13 @@ const PushNotificationsManager = () => {
 
     setSubscription(sub);
 
-    const serializedSub = JSON.parse(JSON.stringify(sub));
+    const json = sub.toJSON();
+
+    if (!json.endpoint) {
+      throw new Error("Subscription endpoint is missing");
+    }
+
+    const serializedSub = json as WebPushSubscription;
 
     await subscribeUser(serializedSub);
   };
@@ -66,7 +74,7 @@ const PushNotificationsManager = () => {
 
     setSubscription(null);
 
-    await unsubscribeUser(subscription);
+    await unsubscribeUser();
   };
 
   const sendTestNotification = async () => {
